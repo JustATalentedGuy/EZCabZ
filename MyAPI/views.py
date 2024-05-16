@@ -65,6 +65,13 @@ class crudUser(APIView):
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 else:
                     return Response("User with provided email and password does not exist", status=status.HTTP_404_NOT_FOUND)
+            elif Email:
+                user = User.objects.filter(email=Email).first()
+                if user:
+                    serializer = userSerializer(user)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response("User with provided email does not exist", status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response("Invalid request parameters", status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
@@ -110,8 +117,8 @@ class crudRides(APIView):
                 raise Http404("Ride does not exist")
         elif user_id:
             try:
-                user = User.objects.filter(userID = user_id)
-                serializer = userSerializer(user, many=True)
+                user = Ride.objects.filter(userID = user_id)
+                serializer = rideSerializer(user, many=True)
                 return(Response(serializer.data, status=status.HTTP_200_OK))
             except:
                 raise Http404("User does not exist")
